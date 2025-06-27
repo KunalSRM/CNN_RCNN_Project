@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-time Object Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Real-time Object Detection</h1>
+        
+        <form id="modelForm">
+            <select name="model" id="model" onchange="selectModel()">
+                <option value="yolo">YOLOv5</option>
+                <option value="rcnn">Faster RCNN</option>
+            </select>
+        </form>
+
+        <div class="video-feed">
+            <img id="videoFeed" src="{{ url_for('video') }}" width="720" />
+        </div>
+    </div>
+
+    <script>
+        function selectModel() {
+            var selectedModel = document.getElementById("model").value;
+            fetch('/select_model', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ model: selectedModel })
+            }).then(response => {
+                if (response.ok) {
+                    alert("Model switched to: " + selectedModel);
+                    // Reload video feed to start new stream
+                    document.getElementById('videoFeed').src = '/video?' + new Date().getTime();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
